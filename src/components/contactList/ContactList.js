@@ -5,7 +5,7 @@ import phonebookActions from '../../redux/phonebook/phonebook-actions';
 import styles from './ContactList.module.css';
 import { connect } from 'react-redux';
 
-const ContactList = ({ contacts, onDeleteContact }) => (
+const ContactList = ({ contacts, onDeleteContact, onChangeFilter }) => (
   <>
     <ul>
       {contacts.map(({ name, number, id }) => (
@@ -14,7 +14,13 @@ const ContactList = ({ contacts, onDeleteContact }) => (
             name={name}
             number={number}
             id={id}
-            onDeleteContact={() => onDeleteContact(id)}
+            onDeleteContact={() => {
+              onDeleteContact(id);
+
+              if (contacts.length === 1) {
+                onChangeFilter();
+              }
+            }}
           />
         </li>
       ))}
@@ -44,6 +50,7 @@ const mapStateToProps = ({ phonebook: { contacts, filter } }) => ({
 
 const mapDispatchToProps = dispatch => ({
   onDeleteContact: id => dispatch(phonebookActions.deleteContact(id)),
+  onChangeFilter: () => dispatch(phonebookActions.changeFilter('')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
